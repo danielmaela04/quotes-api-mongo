@@ -7,8 +7,9 @@ export async function update(request: Request, response: Response) {
   const payload = request.body;
 
   try {
-    if (!isValidObjectId(params.id)) {
-      throw new Error("not valid id");
+    const exists = await QuotesModel.findById(params.id);
+    if (!isValidObjectId(params.id) || !exists) {
+      throw new Error("id not found");
     }
   } catch (error: Error | any) {
     return response.status(400).json({ message: error.message });

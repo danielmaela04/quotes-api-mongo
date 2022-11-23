@@ -1,20 +1,19 @@
 import type { Request, Response } from "express";
-import { INewQuote } from "../@types";
 import { QuotesModel } from "../model";
+import { checkPayloadFields } from "../resource";
 
 export async function create(request: Request, response: Response) {
-  const payload = request.body as INewQuote;
-
+  const payload = request.body;
   try {
-    const created = await QuotesModel.create({
-      ...payload,
-    });
+    checkPayloadFields(payload, ["author", "quote"]);
+  } catch (error: Error | any) {
+    return response.status(400).json({ message: error.message });
+  }
+  try {
+    const create = await QuotesModel.insertMany(payload || payload.sort());
     return response.status(201).json({
       message: "created",
-      count: 1,
-      data: {
-        _id: created._id,
-      },
+      count: create.length,
     });
   } catch (error: Error | any) {
     return response.status(500).json({ message: error.message });

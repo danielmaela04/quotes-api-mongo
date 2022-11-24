@@ -8,6 +8,6 @@ router.get("/", controllers.getAll);
 router.put("/:id", controllers.update);
 router.delete("/:id", controllers.deleteById);
 router.get("/:id", controllers.getById);
-router.get("/example/", controllers.search);
+router.get("/search/:key", controllers.search);
 
 export { router as QuotesRoutes };

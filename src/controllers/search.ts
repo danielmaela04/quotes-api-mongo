@@ -6,14 +6,18 @@ export async function search(request: Request, response: Response) {
 
   try {
     const results = await QuotesModel.find({
-      $text: { $search: "Musk" },
+      $or: [{ author: { $regex: new RegExp(params.key, "i") } }],
     });
+
+    if (results.length <= 0) {
+      return response.status(404).json({ message: "results not found" });
+    }
     return response.status(200).json({
       message: "ok",
       count: results.length,
       data: results,
     });
   } catch (error: Error | any) {
-    return response.status(400).json({ message: error.message });
+    return response.status(500).json({ message: error.message });
   }
 }
